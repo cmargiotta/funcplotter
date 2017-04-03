@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Encoding=UTF-8
-Name=Function Plotter
-Exec=Plotter
-Icon=/usr/share/icons/Plotter.svg
-Terminal=true
