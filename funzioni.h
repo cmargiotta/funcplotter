@@ -7,51 +7,39 @@
 #define pi 3.141593
 #define e 2.718282
 
-typedef struct elemento {
+typedef struct element{
 	/*  
-	1. Somma
-	2. Prodotto
-	3. Sottrazione
-	4. Divisione
-	5. Potenza
-	6. Logaritmo naturale
-	7. Seno
-	8. Coseno
-	9. Radice quadrata
-	a. Costante
+	1. Sum
+	2. Product
+	3. Substraction
+	4. Division
+	5. Power
+	6. Natural logarithm
+	7. Sine
+	8. Cosine
+	9. Square root
+	a. Constant
 	b. Sinc
 	c. x
 	d. Rect
 	e. Delta
 	f. Abs
 	g. Tri
-	h. Parametro
+	h. Parameter
 	*/
 	
-	char tipo;
-	double valore;
-	struct elemento* argomento;
-	struct elemento* prec;
-	int animata;
-} elemento;
+	char type;
+	double value;
+	struct element* argument;
+	struct element* prev;
+	int animated;
+} element;
 
-typedef elemento* funzione;
+typedef element* function;
 
-double Calcola(funzione f, double x, double p);
-funzione new_funzione(stringa s);
-int Memoria_occupata(stringa s);
-int Verifica_Parentesi(stringa s);
-stringa Pulisci(stringa s);
-stringa Rimuovi_parentesi(stringa s);
-funzione argom(stringa s, int i);
-double area(double i, double y1, double y2);
-double distanza(double x1, double x2, double y1, double y2);
-stringa aggiungipar(stringa s);
-double areatot(double *punti1, double *punti2, double incr);
-
-double distanza(double x1, double x2, double y1, double y2) {
-	double distanza = sqrt(pow(x2-x1,2)+pow(y2-y1,2));
-	return distanza;
+double distance(double x1, double x2, double y1, double y2) {
+	double dist = sqrt(pow(x2-x1,2)+pow(y2-y1,2));
+	return dist;
 }
 
 double area(double incr, double y1, double y2) {
@@ -75,22 +63,22 @@ double area(double incr, double y1, double y2) {
 	return area;
 }
 
-double areatot(double *punti1, double *punti2, double incr) {
+double integral(double *punti1, double *punti2, double incr) {
 	int i;
-	double areatratto;
+	double traitarea;
 	double a = 0;
 	double k = 644.0/(2*y);
 	
 	for (i = 1; i < 840; i++) {
-		areatratto = k*area(incr, punti1[i-1]/k, punti1[i]/k);
-		areatratto *= k*area(incr, punti2[i-1]/k, punti2[i]/k);
-		a += areatratto;
+		traitarea = k*area(incr, punti1[i-1]/k, punti1[i]/k);
+		traitarea *= k*area(incr, punti2[i-1]/k, punti2[i]/k);
+		a += traitarea;
 	}
 	
 	return a;
 }
 
-stringa aggiungipar(stringa s) {
+string addpar(string s) {
 	int x = num_char(s, 'x');
 	int a = num_char(s, 'a');
 	if (a < x) {
@@ -118,14 +106,14 @@ stringa aggiungipar(stringa s) {
 			}
 		}
 		c[d] = '\0';
-		stringa result = {len, c};
+		string result = {len, c};
 		return result;
 	}
 	
 	return s;
 }
 
-stringa Rimuovi_parentesi(stringa s) {
+string remove_par(string s) {
 	if (s.str[0] == '(' && s.str[s.len-1] == ')') {
 		char *c = (char *) malloc(s.len-1);
 		int i, j=0;
@@ -134,16 +122,16 @@ stringa Rimuovi_parentesi(stringa s) {
 			j++;
 		}
 		c[j] = '\0';
-		stringa pulita = new_string(c);
-		if (Verifica_Parentesi(pulita)) {
-			return pulita;	
+		string clean = new_string(c);
+		if (verify_str_par(clean)) {
+			return clean;	
 		}
 		free(c);
 	}
 	return s;
 }
 
-stringa Pulisci(stringa s) {
+string clean(string s) {
 	int i = num_char(s, ' '), j = 0;
 	char *c;
 	if (s.str[0] == '-') {
@@ -167,12 +155,12 @@ stringa Pulisci(stringa s) {
 		}
 	}
 	c[j] = '\0';
-	stringa str = new_string(c);
-	str = Rimuovi_parentesi(str);
+	string str = new_string(c);
+	str = remove_par(str);
 	return str;
 }
 
-int Memoria_occupata(stringa s) {
+int occupied_memory(string s) {
 	int m = 1;
 	m += num_char(s, '+');
 	m += num_char(s, '-');
@@ -188,7 +176,7 @@ int Memoria_occupata(stringa s) {
 	return m;
 }
 
-int Verifica_Parentesi(stringa s) {
+int verify_str_par(string s) {
 	int control = 0, i;
 	
 	for (i = 0; i < s.len; i++) {
@@ -211,17 +199,17 @@ int Verifica_Parentesi(stringa s) {
 	return 0;
 }
 
-funzione argom(stringa s, int i) {
-	stringa *parti;
-	parti = dividi(',', s, 0);
+funzione argum(stringa s, int i) {
+	string *parts;
+	parts = divide(',', s, 0);
 	
-	return new_funzione(parti[i]);
+	return new_function(parts[i]);
 }
 
-funzione new_funzione(stringa s) {
-	s = Pulisci(s);
-	funzione f = (elemento *) malloc(sizeof(elemento));
-	stringa *parti;
+funzione new_function(string s) {
+	s = clean(s);
+	function f = (element *) malloc(sizeof(elemento));
+	stringa *parts;
 	int i, j;
 	int num;
 	char c[5] = {'+','*','-','/','^'};
@@ -232,17 +220,17 @@ funzione new_funzione(stringa s) {
 		j = 1;
 		if (num >= 1) {
 			if (i == 2) {
-				parti = dividi(c[i], s, num);
-				while (!(parti[1].len > 0 && Verifica_Parentesi(parti[0])) && j > 0) {
+				parts = divide(c[i], s, num);
+				while (!(parts[1].len > 0 && verify_str_par(parti[0])) && j > 0) {
 					j--;
-					parti = dividi(c[i], s, j);
+					parts = divide(c[i], s, j);
 				}
 			}
 			else {
-				parti = dividi(c[i], s, 1);
-				while (!(parti[1].len > 0 && Verifica_Parentesi(parti[0])) && j <= num) {
+				parts = divide(c[i], s, 1);
+				while (!(parts[1].len > 0 && verify_str_par(parti[0])) && j <= num) {
 					j++;
-					parti = dividi(c[i], s, j);
+					parts = divide(c[i], s, j);
 				}
 			}
 			if (parti[1].len > 0 && Verifica_Parentesi(parti[0])) {
