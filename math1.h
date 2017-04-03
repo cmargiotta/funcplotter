@@ -2,7 +2,6 @@
 #define _MATH1H_
 
 #include <stdio.h>
-#include "frazioni.h"
 #include <math.h>
 
 #define pi 3.141593
