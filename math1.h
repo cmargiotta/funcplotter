@@ -8,18 +8,6 @@
 
 int x, y;
 
-int Potenza(int b, int e);
-double absol(double b);
-double Potenza_double (double b, int esp);
-double Radice (double b, int indice);
-double Potenza_frazione (double b, frazione esp);
-double Rect(double t);
-double step(double center, double t, double h);
-double Potenza_esponente_double (double b, double esp);
-double sinc(double x);
-double delta(double x);
-double Tri(double base, double x);
-
 double Tri(double base, double x) {
 	if (x > -base && x <= 0) {
 		return 1 + x/base;	
@@ -49,14 +37,6 @@ double sinc(double x) {
 }
 
 
-int Potenza(int b, int esp) {
-	switch (esp) {
-		case 0: return 1;
-		case 1: return b;
-		default: return b*Potenza(b, esp-1);
-	}
-}
-
 double step(double center, double t, double h) {
 	if (t >= center) {
 		return h;
@@ -84,14 +64,6 @@ int Cifre_decimali(double n) {
 		n_int = (int) n;
 	}
 	return cifre;
-}
-
-double Potenza_double (double b, int esp) {
-	switch (esp) {
-		case 0: return 1.0;
-		case 1: return b;
-		default: return b*Potenza_double(b, esp-1);
-	}
 }
 
 double absol(double b) {
