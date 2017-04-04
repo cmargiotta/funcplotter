@@ -1,57 +1,29 @@
 #include <stdio.h>
 #include "math1.h"
 
-typedef struct stringa {
+typedef struct {
 	int len;
 	char* str;
-} stringa;
+} string;
 
-stringa *dividi(char c, stringa s, int skip);
-stringa new_string (char *s);
-char *literaltoarray(char *c);
-int length(char *c);
-int num_char(stringa s, char ch);
-int valueOf_char(char c);
-double valueOf(stringa s);
-int find_char(stringa s, char c);
+//supposing c ends with '\0'
+int length (char *c) {
+	int len = 0;
 
-double valueOf(stringa s) {
-	int p = num_char(s, '.');
-	int i;
-	double val = 0;
-	
-	if (p == 1) {
-		int punto = find_char(s, '.');
-		
-		for (i = 0; i < punto; i++) {
-			val += Potenza(10,punto-i-1)*valueOf_char(s.str[i]);	
-		}
-		
-		for (i = punto+1; i < s.len; i++) {
-			val += Potenza_double(0.1,i-punto)*valueOf_char(s.str[i]);		
-		}
-		return val;
+	while (c[len] != '\0') {
+		len++;
 	}
-	
-	for (i = 0; i < s.len; i++) {
-		val += Potenza(10,s.len-i-1)*valueOf_char(s.str[i]);
-	}
-	
-	return val;
+
+	return len;
 }
 
-int find_char(stringa s, char c) {
-	int i;
-	
-	for (i = 0; i < s.len; i++) {
-		if (s.str[i] == c) {
-			return i;	
-		}
-	}
-	
-	return -1;
+//generates a string from a char array
+string new_string (char *s) {
+	string string = {length(s), s};
+	return string;
 }
 
+//converts a char in the corresponding integer
 int valueOf_char(char c) {
 	switch(c) {
 		case '1': return 1;
@@ -67,31 +39,78 @@ int valueOf_char(char c) {
 	}
 }
 
-int num_char(stringa s, char ch) {
+//counts ch in s
+int num_char(string s, char ch) {
 	int n = 0;
 	int c = 0;
-	
+
 	while (c < s.len) {
 		if (s.str[c] == ch) {
-			n++;	
+			n++;
 		}
 		c++;
 	}
-	
+
 	return n;
 }
 
-stringa *dividi(char c, stringa string, int skip) {
+//returns the index of c in s, -1 if s doesn't contain c
+int find_char(string s, char c) {
+	int i;
+
+	for (i = 0; i < s.len; i++) {
+		if (s.str[i] == c) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+//returns the double value of a string like '12.5'
+double valueOf(string s) {
+	int p = num_char(s, '.');
+	int i;
+	double val = 0;
+
+	if (p == 1) {
+		int point = find_char(s, '.');
+
+		for (i = 0; i < point; i++) {
+			val += pow(10,point-i-1)*valueOf_char(s.str[i]);
+		}
+
+		for (i = point+1; i < s.len; i++) {
+			val += pow(0.1,i-point)*valueOf_char(s.str[i]);
+		}
+		return val;
+	}
+
+	for (i = 0; i < s.len; i++) {
+		val += pow(10,s.len-i-1)*valueOf_char(s.str[i]);
+	}
+
+	return val;
+}
+
+/*
+splits a string in function of c, skipping 'skip' parts:
+string str = new_string("a.b.c");
+string *divided = divide('.', str, 1);
+
+divided[0] will be "a.b" and divided[1] will be "c"
+*/
+string *divide(char c, string str, int skip) {
 	char** s = (char **) malloc(2*sizeof(char*));
 	int i, found = 0, d = 0;
-	
-	s[0] = (char*) malloc(string.len*sizeof(char));
-	s[1] = (char*) malloc(string.len*sizeof(char));
-	for (i = 0; i < string.len; i++) {
-		if (string.str[i] == c && !found) {
+
+	s[0] = (char*) malloc(str.len*sizeof(char));
+	s[1] = (char*) malloc(str.len*sizeof(char));
+	for (i = 0; i < str.len; i++) {
+		if (str.str[i] == c && !found) {
 			if (skip > 1) {
 				skip--;
-				s[0][i] = string.str[i];
+				s[0][i] = str.str[i];
 			}
 			else {
 				found = 1;
@@ -100,44 +119,19 @@ stringa *dividi(char c, stringa string, int skip) {
 		}
 		else {
 			if (found) {
-				s[1][d] = string.str[i];
+				s[1][d] = str.str[i];
 				d++;
 			}
 			else {
-				s[0][i] = string.str[i];
+				s[0][i] = str.str[i];
 			}
 		}
 	}
 	s[1][d] = '\0';
-	
-	stringa *result = (stringa *) malloc(2*sizeof(stringa));
-	result[0] = new_string(s[0]); 
+
+	string *result = (string *) malloc(2*sizeof(string));
+	result[0] = new_string(s[0]);
 	result[1] = new_string(s[1]);
+
 	return result;
-}
-
-int length (char *c) {
-	int len = 0;
-	
-	while (c[len] != '\0') {
-		len++;	
-	}
-	
-	return len;
-}
-
-stringa new_string (char *s) {
-	stringa string = {length(s), s};
-	return string;
-}
-
-char *literaltoarray(char *c) {
-	int len = length(c), i;
-	char *s = (char *) malloc(len * sizeof(char));
-	
-	for (i = 0; i < len; i++) {
-		s[i] = c[i];	
-	}
-	
-	return s;
 }
