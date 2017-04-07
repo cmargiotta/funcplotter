@@ -3,8 +3,15 @@ A simple function plotter, with (animated) support for parametric function and c
 
 # Install
 ```sh
-$ sudo sh -c "cmake CMakeLists.txt && make && make install"
+$ sudo sh -c "cmake -DINSTALL=ON CMakeLists.txt && make && make install"
 ```
+Will install plotter in /usr/local/bin, allowing it to be executed with `plotter` from terminal, and a .desktop file in /usr/share/applications.
+
+```
+$ cmake -DINSTALL=OFF CMakeLists.txt
+$ make
+```
+Will compile plotter and put it in the local bin folder.
 
 # Functions
 rect(): rectangular impulse<br>
