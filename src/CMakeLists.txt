@@ -38,3 +38,19 @@ target_link_libraries(Plotter
   stringutils
   math1
   function)
+
+
+
+install (TARGETS Plotter DESTINATION /usr/local/bin)
+file (COPY plotter.svg DESTINATION /usr/local/share/icons)
+file(COPY plotter.glade DESTINATION /var/lib/plotter)
+
+file(WRITE plotter.desktop "[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Function Plotter
+Exec=Plotter
+Icon=/usr/local/share/icons/plotter.svg
+Terminal=false")
+
+file (COPY plotter.desktop DESTINATION /usr/share/applications)

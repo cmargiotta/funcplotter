@@ -404,7 +404,7 @@ int main (int argc, char *argv[]) {
   gtk_init (&argc, &argv);
 
   builder = gtk_builder_new ();
-  gtk_builder_add_from_file (builder, "plotter.glade", NULL);
+  gtk_builder_add_from_file (builder, "/var/lib/plotter/plotter.glade", NULL);
 
 	speed = GTK_LABEL(GTK_WIDGET (gtk_builder_get_object (builder, "fps")));
 	refresh_speed();
