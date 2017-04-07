@@ -3,8 +3,7 @@ A simple function plotter, with (animated) support for parametric function and c
 
 # Install
 ```sh
-$ cmake CMakeLists.txt
-$ make
+$ sudo sh -c "cmake CMakeLists.txt && make && make install"
 ```
 
 # Functions
