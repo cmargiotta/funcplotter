@@ -5,6 +5,7 @@
 #include <math.h>
 #include <time.h>
 
+#include "install_option.h"
 #include "math1.h"
 #include "stringutils.h"
 #include "function.h"
@@ -404,7 +405,7 @@ int main (int argc, char *argv[]) {
   gtk_init (&argc, &argv);
 
   builder = gtk_builder_new ();
-  gtk_builder_add_from_file (builder, "/var/lib/plotter/plotter.glade", NULL);
+  gtk_builder_add_from_file (builder, get_glade_path(), NULL);
 
 	speed = GTK_LABEL(GTK_WIDGET (gtk_builder_get_object (builder, "fps")));
 	refresh_speed();
