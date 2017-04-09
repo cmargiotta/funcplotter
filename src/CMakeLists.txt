@@ -25,7 +25,7 @@ set(Function_Plotter_HEADERS
 
 ADD_DEFINITIONS(${GTK3_CFLAGS_OTHER})
 
-set(CMAKE_CC_FLAGS "-rdynamic -Wall")
+set(CMAKE_CC_FLAGS "-rdynamic -Wall -lm")
 
 add_library(math1 math1.c)
 add_library(stringutils stringutils.c)
