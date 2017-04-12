@@ -1,5 +1,5 @@
-#ifndef _PLOTTERH_
-#define _PLOTTERH_
+#ifndef PLOTTERH_
+#define PLOTTERH_
 
 //INTERFACE FUNCTIONS
 void on_convol_clicked (GtkButton *button, gpointer   user_data);
