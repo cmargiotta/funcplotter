@@ -1,5 +1,5 @@
-#ifndef _FUNCTIONH_
-#define _FUNCTIONH_
+#ifndef FUNCTIONH_
+#define FUNCTIONH_
 
 #include "stringutils.h"
 
