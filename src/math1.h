@@ -1,5 +1,5 @@
-#ifndef _MATH1H_
-#define _MATH1H_
+#ifndef MATH1H_
+#define MATH1H_
 
 /**
 *Triangular impulse with base b
