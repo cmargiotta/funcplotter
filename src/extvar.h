@@ -1,5 +1,5 @@
-#ifndef _EXTVARH_
-#define _EXTVARH_
+#ifndef EXTVARH_
+#define EXTVARH_
 
 extern int x, y;
 
