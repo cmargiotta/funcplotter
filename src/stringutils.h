@@ -1,5 +1,5 @@
-#ifndef _STRINGUTILSH_
-#define _STRINGUTILSH_
+#ifndef STRINGUTILSH_
+#define STRINGUTILSH_
 
 typedef struct {
 	int len;
