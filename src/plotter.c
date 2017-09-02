@@ -11,7 +11,8 @@
 #include "extvar.h"
 #include "plotter.h"
 
-#define GLADE_PATH "share/plotter/plotter.glade"
+#include <resources.h>
+#define GLADE_RESOURCE_PATH "/plotter/plotter.glade"
 
 int x, y;
 //drawable functions
@@ -405,7 +406,9 @@ int main (int argc, char *argv[]) {
   GtkWidget *window;
   gtk_init (&argc, &argv);
 
-  builder = gtk_builder_new_from_file(GLADE_PATH);
+  plotter_register_resource();
+
+  builder = gtk_builder_new_from_resource(GLADE_RESOURCE_PATH);
 
 	speed = GTK_LABEL(GTK_WIDGET (gtk_builder_get_object (builder, "fps")));
 	refresh_speed();
@@ -419,5 +422,6 @@ int main (int argc, char *argv[]) {
 	//STARTING GTK LOOP
   gtk_main ();
 
+  plotter_unregister_resource();
   return 0;
 }
