@@ -5,12 +5,13 @@
 #include <math.h>
 #include <time.h>
 
-#include "install_option.h"
 #include "math1.h"
 #include "stringutils.h"
 #include "function.h"
 #include "extvar.h"
 #include "plotter.h"
+
+#define GLADE_PATH "share/plotter/plotter.glade"
 
 int x, y;
 //drawable functions
@@ -404,8 +405,7 @@ int main (int argc, char *argv[]) {
   GtkWidget *window;
   gtk_init (&argc, &argv);
 
-  builder = gtk_builder_new ();
-  gtk_builder_add_from_file (builder, get_glade_path(), NULL);
+  builder = gtk_builder_new_from_file(GLADE_PATH);
 
 	speed = GTK_LABEL(GTK_WIDGET (gtk_builder_get_object (builder, "fps")));
 	refresh_speed();
