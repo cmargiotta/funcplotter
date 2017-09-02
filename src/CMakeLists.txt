@@ -20,9 +20,9 @@ target_link_libraries(function math1)
 gresource(${CMAKE_CURRENT_SOURCE_DIR} plotter.gresource.xml ${CMAKE_BINARY_DIR} resources)
 add_library(resources ${CMAKE_BINARY_DIR}/resources.c)
 
-add_executable(Plotter plotter.c)
-target_include_directories(Plotter PUBLIC ${CMAKE_BINARY_DIR})
-target_link_libraries(Plotter
+add_executable(plotter plotter.c)
+target_include_directories(plotter PUBLIC ${CMAKE_BINARY_DIR})
+target_link_libraries(plotter
   ${GTK3_LIBRARIES}
 
   m
@@ -32,6 +32,6 @@ target_link_libraries(Plotter
   resources
 )
 
-install (TARGETS Plotter DESTINATION bin)
+install (TARGETS plotter DESTINATION bin)
 install (FILES plotter.svg DESTINATION share/icons)
 install (FILES plotter.desktop DESTINATION share/applications)
