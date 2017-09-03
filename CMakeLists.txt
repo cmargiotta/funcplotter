@@ -16,7 +16,7 @@ include_directories(${GTK3_INCLUDE_DIRS})
 link_directories(${GTK3_LIBRARY_DIRS})
 
 ADD_DEFINITIONS(${GTK3_CFLAGS_OTHER})
-set(CMAKE_CC_FLAGS "-rdynamic -Wall -lm")
+set(CMAKE_C_FLAGS "-Wall -Wextra -pedantic")
 
 
 add_subdirectory(src)
