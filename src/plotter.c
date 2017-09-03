@@ -111,7 +111,7 @@ string done_clicked(char *a, function func, double** array) {
 	string s = new_string(a);
 
 	free_function(func);
-	f = new_function(s);
+	func = new_function(s);
 	ComputeFunction(func, array);
 	if (f->animated && !conv) {
 		for (par = 0; par < 840; par++) {
