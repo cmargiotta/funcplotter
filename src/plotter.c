@@ -5,12 +5,14 @@
 #include <math.h>
 #include <time.h>
 
-#include "install_option.h"
 #include "math1.h"
 #include "stringutils.h"
 #include "function.h"
 #include "extvar.h"
 #include "plotter.h"
+
+#include <resources.h>
+#define GLADE_RESOURCE_PATH "/plotter/plotter.glade"
 
 int x, y;
 //drawable functions
@@ -109,7 +111,7 @@ string done_clicked(char *a, function func, double** array) {
 	string s = new_string(a);
 
 	free_function(func);
-	f = new_function(s);
+	func = new_function(s);
 	ComputeFunction(func, array);
 	if (f->animated && !conv) {
 		for (par = 0; par < 840; par++) {
@@ -404,8 +406,9 @@ int main (int argc, char *argv[]) {
   GtkWidget *window;
   gtk_init (&argc, &argv);
 
-  builder = gtk_builder_new ();
-  gtk_builder_add_from_file (builder, get_glade_path(), NULL);
+  plotter_register_resource();
+
+  builder = gtk_builder_new_from_resource(GLADE_RESOURCE_PATH);
 
 	speed = GTK_LABEL(GTK_WIDGET (gtk_builder_get_object (builder, "fps")));
 	refresh_speed();
@@ -419,5 +422,6 @@ int main (int argc, char *argv[]) {
 	//STARTING GTK LOOP
   gtk_main ();
 
+  plotter_unregister_resource();
   return 0;
 }

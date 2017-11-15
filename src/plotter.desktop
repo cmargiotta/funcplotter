@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Function Plotter
+Exec=plotter
+Icon=/usr/local/share/icons/plotter.svg
+Categories=Education;
+Terminal=false
