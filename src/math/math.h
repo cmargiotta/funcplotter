@@ -102,4 +102,24 @@ class Math::Support {
 		 * Computes the definite integral of a function between -X_axis and +X_axis
 		 **/
 		double integral(double *points1, double *points2, double incr);
+		/**
+		 * Triangular impulse with base b
+		 **/
+		double Tri(double b, double x);
+		/**
+		 *Dirac delta
+		 **/
+		double delta(double x1);
+		/**
+		 *Sinc function (sin(arg)/arg)
+		 **/
+		double sinc(double x);
+		/**
+		 *Step function, starting in center and tall h
+		 **/
+		double step(double center, double x, double h);
+		/**
+		 *Rectangular impulse
+		 **/
+		double Rect(double t);
 };
