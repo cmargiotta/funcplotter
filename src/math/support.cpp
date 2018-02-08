@@ -1,9 +1,8 @@
 #include <cmath>
+#include <string>
 
 #include "math.h"
 #include "../globals.h"
-
-const double pi (3.141593);
 
 double Math::Support::distance(double x1, double x2, double y1, double y1) {
 	return sqrt(pow(x2-x1, 2) + pow(y2-y1, 2));
@@ -52,7 +51,7 @@ double Math::Support::integral(double *points1, double *points2, double incr) {
 	return a;
 }
 
-double Tri(double b, double x) {
+double Math::Support::Tri(double b, double x) {
 	if (x > -b && x <= 0) {
 		return 1 + x/b;
 	}
@@ -64,7 +63,7 @@ double Tri(double b, double x) {
 	return 0;
 }
 
-double delta(double x1) {
+double Math::Support::delta(double x1) {
 	int x;
 	double incr = (2*x)/850.0;
 
@@ -75,7 +74,7 @@ double delta(double x1) {
 	return 0;
 }
 
-double sinc(double x) {
+double Math::Support::sinc(double x) {
 	if (x > (-0.001) && x < (0.001)) {
 		return 1;
 	}
@@ -86,16 +85,46 @@ double sinc(double x) {
 	return y;
 }
 
-double step(double center, double x, double h) {
+double Math::Support::step(double center, double x, double h) {
 	if (x >= center)
 		return h;
 
 	return 0;
 }
 
-double Rect(double x) {
+double Math::Support::Rect(double x) {
 	if (x > (-1/2.0) && x < (1/2.0))
 		return 1;
 
 	return 0;
+}
+
+std::string *divide(char c, string str, int skip) {
+	std::string result = new std::string[2];
+	int i;
+	bool found = false;
+
+	s[0] = new std::string("");
+	s[1] = new std::string("");
+	
+	for (i = 0; i < str.size(); i++) {
+		if (str[i] == c && !found) {
+			if (skip > 1) {
+				skip--;
+				s[0] += str[i];
+			}
+			else
+				found = true;
+		}
+		else {
+			if (found) {
+				s[1] += str.str[i];
+			}
+			else {
+				s[0] += str.str[i];
+			}
+		}
+	}
+
+	return result;
 }

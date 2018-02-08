@@ -20,7 +20,8 @@ class Math::Function {
 		double Compute(function f, double x, double parameter);
 
 	private:
-		//used only in the root node
+		//number of children
+		int children;
 		std::string expression;
 		/**************************
 		 * Possible "type" values:
@@ -56,16 +57,15 @@ class Math::Function {
 		 * 				/ \
 		 * 			   12  x
 		 * 
-		 * connectedNodes[0] -> parent (nullptr if at root)
-		 * ...[1] -> first son
-		 * ...[2] -> second son
+		 * connectedNodes[0] -> first son
+		 * ...[1] -> second son
 		*****/ 
 		Math::Function* connectedNodes;
 		
 		/**
 		 * Used in convolution, it replaces every x with (-x+a)
 		 **/
-		void prepare_for_convolution();
+		std::string prepare_for_convolution();
 		/**
 		 * Verifies if every ( is closed by a )
 		 **/
@@ -83,7 +83,7 @@ class Math::Function {
 		 * Used for Triangular signals: Tri(a,b)
 		 * returns a if i = 0, else b
 		 **/
-		function argum(string s, int i);
+		Math::Function argum(string s, int i);
 };
 
 class Math::Support {
@@ -122,4 +122,12 @@ class Math::Support {
 		 *Rectangular impulse
 		 **/
 		double Rect(double t);
+		/**
+		 * Splits a string in function of c, skipping 'skip' parts:
+		 * string str = new_string("a.b.c");
+		 * string *divided = divide('.', str, 1);
+		 *
+		 * divided[0] will be "a.b" and divided[1] will be "c"
+		 **/
+		std:string* divide(char c, std:string str, int skip);
 };
