@@ -25,10 +25,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        funcplotter.cpp
+        funcplotter.cpp \
+        src/math/function.cpp \
+        src/math/support.cpp
 
 HEADERS += \
-        funcplotter.h
+        funcplotter.h \
+        src/globals.h \
+        src/math/math.h
 
 FORMS += \
         funcplotter.ui

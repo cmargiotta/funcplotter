@@ -4,11 +4,10 @@
 funcplotter::funcplotter(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::funcplotter)
-{
-    ui->setupUi(this);
-}
+    {
+        ui->setupUi(this);
+    }
 
-funcplotter::~funcplotter()
-{
+funcplotter::~funcplotter() {
     delete ui;
 }

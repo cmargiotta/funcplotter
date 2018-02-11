@@ -17,6 +17,7 @@ class funcplotter : public QMainWindow
 
     private:
         Ui::funcplotter *ui;
+        
 };
 
 #endif // FUNCPLOTTER_H

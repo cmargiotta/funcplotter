@@ -1,7 +1,7 @@
 #ifndef MATH1_H
 #define MATH1_H
 
-#include <string>
+#include <QString>
 
 namespace Math {
 	class Function;
@@ -10,7 +10,7 @@ namespace Math {
 class Math::Function {
 	public:
 		//constructor
-		Function(std::string);
+        Function(QString);
 		//destructor
 		~Function();
 		
@@ -65,11 +65,11 @@ class Math::Function {
 		/**
 		 * Used in convolution, it replaces every x with (-x+a)
 		 **/
-		std::string prepare_for_convolution();
+        QString prepare_for_convolution();
 		/**
 		 * Verifies if every ( is closed by a )
 		 **/
-		bool verify_str_par();
+        bool verify_str_par(QString* s = nullptr);
 		/**
 		 * Removes excessing parenthesis: (sin(x)) -> sin(x)
 		 **/
@@ -83,7 +83,7 @@ class Math::Function {
 		 * Used for Triangular signals: Tri(a,b)
 		 * returns a if i = 0, else b
 		 **/
-		Math::Function argum(string s, int i);
+        Math::Function argum(QString s, int i);
 };
 
 class Math::Support {
@@ -129,5 +129,5 @@ class Math::Support {
 		 *
 		 * divided[0] will be "a.b" and divided[1] will be "c"
 		 **/
-		std:string* divide(char c, std:string str, int skip);
+        QString* divide(char c, QString str, int skip);
 };

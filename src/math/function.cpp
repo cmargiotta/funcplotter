@@ -1,14 +1,14 @@
-#include <string>
+#include <QString>
 #include <algorithm>
-#include <math>
+#include <cmath>
 
 #include "math.h"
 #include "../globals.h"
 
 Math::Support support ();
 
-Math::Function argum(std::string s, int i) {
-	std::string *parts;
+Math::Function argum(QString s, int i) {
+    QString *parts;
 	parts = Math::Support::divide(',', s, 0);
 
 	Math::Function r (parts[i]);
@@ -25,7 +25,7 @@ Math::Function::~Function() {
 	delete connectedNodes;
 }
 
-Math::Function::Function(std::string expr) {
+Math::Function::Function(QString expr) {
 	this->expression = expression;
 	clean();
 	
@@ -34,7 +34,7 @@ Math::Function::Function(std::string expr) {
 	else
 		animated = false;
 	
-	std::string* parts;
+    QString* parts;
 	int i, j;
 	int num;
 	char c[5] = {'+','*','-','/','^'};
@@ -178,13 +178,18 @@ std::string Math::Function::prepare_for_convolution() {
 	return expression;
 }
 
-bool verify_str_par() {
+bool verify_str_par(QString* s = nullptr) {
+    QString expr;
+
+    if (s==nullptr) expr = expression;
+    else expr = *s;
+
 	int control = 0, i;
 
-	for (i = 0; i < expression.size(); i++) {
-		if (expression[i] == '(')
+    for (i = 0; i < expr.size(); i++) {
+        if (expr[i] == '(')
 			control++;
-		else if (expression[i] == ')') {
+        else if (expr[i] == ')') {
 			if (control > 0)
 				control--;
 			else
@@ -252,7 +257,7 @@ double Compute(Math::Function f, double x, double parameter) {
 		case 'f': //Abs
 			return abs(Compute(connectedNodes[0], x, parameter));
 		case 'g': //Tri
-			return Math::Support::(f->value, Compute(connectedNodes[0], x, parameter));
+            return Math::Support::Tri(value, Compute(connectedNodes[0], x, parameter));
 		case 'h': //Parameter
 			return parameter;
 		default: return 0;
