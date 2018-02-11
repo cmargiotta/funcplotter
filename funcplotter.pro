@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-02-08T11:54:24
+# Project created by QtCreator 2018-02-11T17:43:35
 #
 #-------------------------------------------------
 
@@ -25,10 +25,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        main.cpp
+        funcplotter.cpp
 
 HEADERS += \
-        main.h
+        funcplotter.h
 
 FORMS += \
-        mainwindow.ui
+        funcplotter.ui
