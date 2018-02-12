@@ -1,6 +1,7 @@
 #include <QString>
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 
 #include "math.h"
 #include "../globals.h"
@@ -22,7 +23,7 @@ Math::Function::~Function() {
 }
 
 Math::Function::Function(QString* expression) {
-	this->expression = expression;
+    this->expression = new QString(*expression);
     this->clear();
 	
     if (std::count(expression->begin(), expression->end(), 'a') > 0)
@@ -43,19 +44,19 @@ Math::Function::Function(QString* expression) {
 		if (num >= 1) {
 			if (i == 2) {
                 parts = Math::divide(c[i], expression, num);
-                while (!(parts[1]->size() > 0 && verify_str_par(parts[0])) && j > 0) {
+                while (!(parts[1]->length() > 0 && verify_str_par(parts[0])) && j > 0) {
 					j--;
                     parts = Math::divide(c[i], expression, j);
 				}
 			}
 			else {
                 parts = Math::divide(c[i], expression, 1);
-                while (!(parts[1]->size() > 0 && verify_str_par(parts[0])) && j <= num) {
+                while (!(parts[1]->length() > 0 && verify_str_par(parts[0])) && j <= num) {
 					j++;
                     parts = Math::divide(c[i], expression, j);
 				}
 			}
-            if (parts[1]->size() > 0 && verify_str_par(parts[0])) {
+            if (parts[1]->length() > 0 && verify_str_par(parts[0])) {
 				type = t[i];
                 connectedNodes = new Math::Function*[2];
 				children = 2;
@@ -68,7 +69,7 @@ Math::Function::Function(QString* expression) {
 	}
 
 	//if expr is a parameter 'a'
-    if (expression[0] == 'a' && expression->size() == 1) {
+    if (expression[0] == 'a' && expression->length() == 1) {
 		type = 'h';
         this->isAnimated = true;
 		
@@ -160,7 +161,7 @@ QString* Math::Function::prepare_for_convolution() {
         QString *c = new QString("");
 		int i;
 		
-        for (i = 0; i < expression->size(); i++) {
+        for (i = 0; i < expression->length(); i++) {
 			if (expression[i] == 'x')
                 *c += "(-x+a)";
 			else
@@ -181,7 +182,7 @@ bool Math::Function::verify_str_par(QString* s) {
 
 	int control = 0, i;
 
-    for (i = 0; i < expr->size(); i++) {
+    for (i = 0; i < expr->length(); i++) {
         if (expr[i] == '(')
 			control++;
         else if (expr[i] == ')') {
@@ -196,8 +197,8 @@ bool Math::Function::verify_str_par(QString* s) {
 }
 
 void Math::Function::remove_par() {
-    if (expression[0] == QChar('(') && expression[expression->size()-1] == QChar(')')) {
-        QString clean = expression->mid(1, expression->size()-2);
+    if (expression[0] == QChar('(') && expression[expression->length()-1] == QChar(')')) {
+        QString clean = expression->mid(1, expression->length()-2);
 		
         if (verify_str_par(&clean))
             this->expression = &clean;
@@ -205,16 +206,10 @@ void Math::Function::remove_par() {
 }
 
 void Math::Function::clear() {
-    int i = std::count(expression->begin(), expression->end(), ' ');
-	
-	if (expression[0] == '-')
+    if (expression[0] == '-')
         expression->insert(0, '0');
-	else {
-        QString* c = new QString("");
-        for (i = 0; i < expression->size(); i++)
-			if (expression[i] != ' ')
-                *c += expression[i];
-		this->expression = c;
+    else {
+        expression->remove(QChar(' '), Qt::CaseInsensitive);
 		remove_par();
 	}
 }
