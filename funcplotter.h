@@ -2,6 +2,9 @@
 #define FUNCPLOTTER_H
 
 #include <QMainWindow>
+#include <QString>
+
+#include "src/math/math.h"
 
 namespace Ui {
     class funcplotter;
@@ -14,9 +17,13 @@ class funcplotter : public QMainWindow
     public:
         explicit funcplotter(QWidget *parent = 0);
         ~funcplotter();
-
     private:
         Ui::funcplotter *ui;
+        Math::Function *f, *g, *h;
+
+        void onFFunctionReturn();
+        void onGFunctionReturn();
+        void onHFunctionReturn();
 };
 
 #endif // FUNCPLOTTER_H

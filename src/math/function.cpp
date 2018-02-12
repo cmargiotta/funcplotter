@@ -5,15 +5,11 @@
 #include "math.h"
 #include "../globals.h"
 
-Math::Support support ();
+Math::Function* Math::Function::argum(QString* s, int i) {
+    QString **parts;
+    parts = Math::divide(',', s, 0);
 
-Math::Function argum(QString s, int i) {
-    QString *parts;
-	parts = Math::Support::divide(',', s, 0);
-
-	Math::Function r (parts[i]);
-
-	return r;
+    return new Math::Function(parts[i]);
 }
 
 Math::Function::~Function() {
@@ -25,16 +21,16 @@ Math::Function::~Function() {
 	delete connectedNodes;
 }
 
-Math::Function::Function(QString expr) {
+Math::Function::Function(QString* expression) {
 	this->expression = expression;
-	clean();
+    this->clear();
 	
-	if (std::count(expression.begin(), expression.end(), 'a') > 0)
-		animated = true;
+    if (std::count(expression->begin(), expression->end(), 'a') > 0)
+        this->isAnimated = true;
 	else
-		animated = false;
+        this->isAnimated = false;
 	
-    QString* parts;
+    QString** parts;
 	int i, j;
 	int num;
 	char c[5] = {'+','*','-','/','^'};
@@ -42,26 +38,26 @@ Math::Function::Function(QString expr) {
 
 	//if +, *, -, / or ^
 	for (i = 0; i < 5; i++) {
-		num = std::count(expression.begin(), expression.end(), c[i]);
+        num = std::count(expression->begin(), expression->end(), c[i]);
 		j = 1;
 		if (num >= 1) {
 			if (i == 2) {
-				parts = Math::Support::divide(c[i], s, num);
-				while (!(parts[1].size() > 0 && verify_str_par(parts[0])) && j > 0) {
+                parts = Math::divide(c[i], expression, num);
+                while (!(parts[1]->size() > 0 && verify_str_par(parts[0])) && j > 0) {
 					j--;
-					parts = Math::Support::divide(c[i], s, j);
+                    parts = Math::divide(c[i], expression, j);
 				}
 			}
 			else {
-				parts = Math::Support::divide(c[i], s, 1);
-				while (!(parts[1].len > 0 && verify_str_par(parts[0])) && j <= num) {
+                parts = Math::divide(c[i], expression, 1);
+                while (!(parts[1]->size() > 0 && verify_str_par(parts[0])) && j <= num) {
 					j++;
-					parts = Math::Support::divide(c[i], s, j);
+                    parts = Math::divide(c[i], expression, j);
 				}
 			}
-			if (parts[1].size() > 0 && verify_str_par(parts[0])) {
+            if (parts[1]->size() > 0 && verify_str_par(parts[0])) {
 				type = t[i];
-				connectedNodes = new Math::Function[2];
+                connectedNodes = new Math::Function*[2];
 				children = 2;
 				connectedNodes[0] = new Math::Function(parts[0]);
 				connectedNodes[1] = new Math::Function(parts[1]);
@@ -72,9 +68,9 @@ Math::Function::Function(QString expr) {
 	}
 
 	//if expr is a parameter 'a'
-	if (expression[0] == 'a' && expression.size() == 1) {
+    if (expression[0] == 'a' && expression->size() == 1) {
 		type = 'h';
-		animated = true;
+        this->isAnimated = true;
 		
 		return;
 	}
@@ -87,23 +83,23 @@ Math::Function::Function(QString expr) {
 
 	for (i = 0; i < 6; i++) {
 		if (expression[0] == c1[i]) {
-			std::string arg = expression.substr(l[i], expression.npos());
+            QString arg = expression->mid(l[i]);
 			
 			type = id[i];
-			connectedNodes = new Math::Function[1];
-			connectedNodes[0] = new Math::Function(arg);
+            connectedNodes = new Math::Function*[1];
+            connectedNodes[0] = new Math::Function(&arg);
 			
 			return;
 		}
 	}
 
 	if (expression[0] == 't') {
-		std::string arg = expression.substr(5, expression.npos());
+        QString arg = expression->mid(5);
 		
 		type = 'g';
-		value = argum(arg,0).value;
-		connectedNodes = new Math::Function[1];
-		connectedNodes[0] = argum(arg, 1);
+        value = argum(&arg, 0)->value;
+        connectedNodes = new Math::Function*[1];
+        connectedNodes[0] = argum(&arg, 1);
 		
 		return;
 	}
@@ -111,28 +107,28 @@ Math::Function::Function(QString expr) {
 	if (expression[0] == 's') {
 		if (expression[1] == 'i') {
 			//sinc
-			std::string arg;
+            QString arg;
 			if (expression[3] == 'c') {
-				arg = expression.substr(5, expression.npos());				
+                arg = expression->mid(5);
 				type = 'b';				
 			}
 			//sin
 			else {			
-				std::string arg = expression.substr(4, expression.npos());				
+                QString arg = expression->mid(4);
 				type = '7';
 			}
 			
-			connectedNodes = new Math::Function[1];
-			connectedNodes[0] = new Math::Function(arg);
+            connectedNodes = new Math::Function*[1];
+            connectedNodes[0] = new Math::Function(&arg);
 			
 			return;
 		}
 		else {
-			std::string arg = expression.substr(5, expression.npos());
+            QString arg = expression->mid(5);
 			
 			type = '9';
-			connectedNodes = new Math::Function[1];
-			connectedNodes[0] = new Math::Function(arg);
+            connectedNodes = new Math::Function*[1];
+            connectedNodes[0] = new Math::Function(&arg);
 			
 			return;
 		}
@@ -142,7 +138,7 @@ Math::Function::Function(QString expr) {
 
 	if (expression[0] == 'x') {
 		type = 'c';
-		animated = false;
+        this->isAnimated = false;
 		
 		return;
 	}
@@ -151,25 +147,24 @@ Math::Function::Function(QString expr) {
 	if (expression[0] == 'e')
 		value = E;
 	else
-		value = std::stod(expression);
+        value = expression->toDouble();
 	
-	animated = false;
+    this->isAnimated = false;
 }
 
-std::string Math::Function::prepare_for_convolution() {
-	int x = std::count(expression.begin(), expression.end(), 'x');
-	int a = std::count(expression.begin(), expression.end(), 'a');
+QString* Math::Function::prepare_for_convolution() {
+    int x = std::count(expression->begin(), expression->end(), 'x');
+    int a = std::count(expression->begin(), expression->end(), 'a');
 	
-	if (a < x) {
-		int len = expression.size() + x*5;
-		std::string c ("");
+    if (a < x) {
+        QString *c = new QString("");
 		int i;
 		
-		for (i = 0; i < expression.size(); i++) {
+        for (i = 0; i < expression->size(); i++) {
 			if (expression[i] == 'x')
-				c += "(-x+a)";
+                *c += "(-x+a)";
 			else
-				c += expression[i];
+                *c += expression[i];
 		}
 		
 		return c;
@@ -178,15 +173,15 @@ std::string Math::Function::prepare_for_convolution() {
 	return expression;
 }
 
-bool verify_str_par(QString* s = nullptr) {
-    QString expr;
+bool Math::Function::verify_str_par(QString* s) {
+    QString* expr;
 
     if (s==nullptr) expr = expression;
-    else expr = *s;
+    else expr = s;
 
 	int control = 0, i;
 
-    for (i = 0; i < expr.size(); i++) {
+    for (i = 0; i < expr->size(); i++) {
         if (expr[i] == '(')
 			control++;
         else if (expr[i] == ')') {
@@ -200,64 +195,64 @@ bool verify_str_par(QString* s = nullptr) {
 	return control==0;
 }
 
-void remove_par() {
-	if (expression[0] == '(' && expression[expression.size()-1] == ')') {
-		std::string clean = expression.substring(1, expression.size()-2);
+void Math::Function::remove_par() {
+    if (expression[0] == QChar('(') && expression[expression->size()-1] == QChar(')')) {
+        QString clean = expression->mid(1, expression->size()-2);
 		
-		if (verify_str_par(clean))
-			this->expression = clean;
+        if (verify_str_par(&clean))
+            this->expression = &clean;
 	}
 }
 
-void clean() {
-	int i = std::count(expression.begin(), expression.end(), ' ');
+void Math::Function::clear() {
+    int i = std::count(expression->begin(), expression->end(), ' ');
 	
 	if (expression[0] == '-')
-		expression.insert(0, '0');
+        expression->insert(0, '0');
 	else {
-		std::string c ("");
-		for (i = 0; i < expression.size(); i++)
+        QString* c = new QString("");
+        for (i = 0; i < expression->size(); i++)
 			if (expression[i] != ' ')
-				c += expression[i];
+                *c += expression[i];
 		this->expression = c;
 		remove_par();
 	}
 }
 
-double Compute(Math::Function f, double x, double parameter) {
-	switch (f->type) {
+double Math::Function::Compute(double x, double parameter) {
+    switch (type) {
 		case '1': //Sum
-			return (Compute(connectedNodes[0], x, parameter)+Compute(connectedNodes[1], x, parameter));
+            return (connectedNodes[0]->Compute(x, parameter)+connectedNodes[1]->Compute(x, parameter));
 		case '2': //Product
-			return (Compute(connectedNodes[0], x, parameter)*Compute(connectedNodes[1], x, parameter));
+            return (connectedNodes[0]->Compute(x, parameter)*connectedNodes[1]->Compute(x, parameter));
 		case '3': //Substraction
-			return (Compute(connectedNodes[0], x, parameter)-Compute(connectedNodes[1], x, parameter));
+            return (connectedNodes[0]->Compute(x, parameter)-connectedNodes[1]->Compute(x, parameter));
 		case '4': //Division
-			return (Compute(connectedNodes[0], x, parameter)/Compute(connectedNodes[1], x, parameter));
+            return (connectedNodes[0]->Compute(x, parameter)/connectedNodes[1]->Compute(x, parameter));
 		case '5': //Power
-			return pow(Compute(connectedNodes[0], x, parameter), Compute(connectedNodes[1], x, parameter));
+            return pow(connectedNodes[0]->Compute(x, parameter), connectedNodes[1]->Compute(x, parameter));
 		case '6': //Natural logarithm
-			return log(Compute(connectedNodes[0], x, parameter));
+            return log(connectedNodes[0]->Compute(x, parameter));
 		case '7': //Sine
-			return sin(Compute(connectedNodes[0], x, parameter));
+            return sin(connectedNodes[0]->Compute(x, parameter));
 		case '8': //Cosine
-			return cos(Compute(connectedNodes[0], x, parameter));
+            return cos(connectedNodes[0]->Compute(x, parameter));
 		case '9': //Square root
-			return sqrt(Compute(connectedNodes[0], x, parameter));
+            return sqrt(connectedNodes[0]->Compute(x, parameter));
 		case 'a': //Constant
 			return value;
 		case 'b': //Sinc
-			return Math::Support::sinc(Compute(connectedNodes[0], x, parameter));
+            return Math::sinc(connectedNodes[0]->Compute(x, parameter));
 		case 'c': //x
 			return x;
 		case 'd': //Rect
-			return Math::Support::Rect(Compute(connectedNodes[0], x, parameter));
+            return Math::Rect(connectedNodes[0]->Compute(x, parameter));
 		case 'e': //Delta
-			return Math::Support::delta(Compute(connectedNodes[0], x, parameter));
+            return Math::delta(connectedNodes[0]->Compute(x, parameter));
 		case 'f': //Abs
-			return abs(Compute(connectedNodes[0], x, parameter));
+            return abs(connectedNodes[0]->Compute(x, parameter));
 		case 'g': //Tri
-            return Math::Support::Tri(value, Compute(connectedNodes[0], x, parameter));
+            return Math::Tri(value, connectedNodes[0]->Compute(x, parameter));
 		case 'h': //Parameter
 			return parameter;
 		default: return 0;
