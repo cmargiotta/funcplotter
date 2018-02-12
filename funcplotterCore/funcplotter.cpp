@@ -2,8 +2,11 @@
 
 #include "funcplotter.h"
 #include "ui_funcplotter.h"
+
 #include "src/globals.h"
 #include "src/math/math.h"
+
+using namespace Math;
 
 funcplotter::funcplotter(QWidget *parent) :
     QMainWindow(parent),
@@ -21,13 +24,13 @@ funcplotter::~funcplotter() {
 }
 
 void funcplotter::onFFunctionReturn() {
-    f = new Math::Function(new QString(ui->fInput->text()));
+    f = new Function(new QString(ui->fInput->text()));
 }
 
 void funcplotter::onGFunctionReturn() {
-    g = new Math::Function(new QString(ui->gInput->text()));
+    g = new Function(new QString(ui->gInput->text()));
 }
 
 void funcplotter::onHFunctionReturn() {
-    h = new Math::Function(new QString(ui->hInput->text()));
+    h = new Function(new QString(ui->hInput->text()));
 }
