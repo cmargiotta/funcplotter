@@ -1,7 +1,7 @@
 #include "funcplotter.h"
 #include <QApplication>
 
-#include "src/globals.h"
+#include "math/globals.h"
 
 //global variables
 int x;

@@ -1,6 +1,6 @@
 */
 */*/
 *.user
-!funcplotterCore/*
-!funcplotterCore/math/*
-!funcplotterTest/*
+!core/*
+!core/math/*
+!test/*

@@ -61,7 +61,7 @@ class Math::Function {
 		 * Computes the numerical value of a function f(x) with a specified x
 		 **/
         double Compute(double x, double parameter);
-
+        void debugPrint();
     private:
         QString* expression;
 		/**************************

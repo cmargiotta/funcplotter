@@ -1,4 +1,5 @@
 #include <iostream>
+#include <QDebug>
 
 #include "funcplotter.h"
 #include "ui_funcplotter.h"
@@ -25,6 +26,7 @@ funcplotter::~funcplotter() {
 
 void funcplotter::onFFunctionReturn() {
     f = new Function(new QString(ui->fInput->text()));
+    f->debugPrint();
 }
 
 void funcplotter::onGFunctionReturn() {

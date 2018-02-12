@@ -36,3 +36,5 @@ HEADERS += \
 
 FORMS += \
     funcplotter.ui
+
+DISTFILES +=

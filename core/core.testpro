@@ -1,15 +1,14 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-02-12T11:45:29
+# Project created by QtCreator 2018-02-11T17:43:35
 #
 #-------------------------------------------------
 
-QT       += testlib
+QT       += core gui
 
-TARGET = tst_funcplottertesttest
-CONFIG   += console
-CONFIG   -= app_bundle
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+TARGET = funcplotter
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -25,6 +24,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        tst_funcplottertesttest.cpp 
+    math/core/function.cpp \
+    math/core/support.cpp
 
-DEFINES += SRCDIR=\\\"$$PWD/\\\"
+HEADERS += \
+    math/globals.h \
+    math/core/math.h

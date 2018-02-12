@@ -19,13 +19,36 @@ Math::Function* Math::Function::argum(QString* s, int i) {
     return new Math::Function(parts[i]);
 }
 
+void Math::Function::debugPrint() {
+    int children;
+
+    qInfo()<<*expression<<endl;
+
+    if (std::find(t, t+5, type) != t+5)
+        children = 2;
+    else children = 1;
+
+    if (type != 'a' && type != 'c') {
+        for (int i = 0; i < children; i++)
+            connectedNodes[i]->debugPrint();
+    }
+}
+
 Math::Function::~Function() {
+    int children;
+
+    if (std::find(t, t+5, type) != t+5)
+        children = 2;
+    else children = 1;
+
     delete expression;
 
-    //for (int i = 0; i < children; i++)
-   //     delete connectedNodes[i];
+    if (type != 'a' && type != 'c') {
+        for (int i = 0; i < children; i++)
+            delete connectedNodes[i];
 
-    delete connectedNodes;
+        delete[] connectedNodes;
+    }
 }
 
 Math::Function::Function(QString* expr) {
@@ -111,10 +134,12 @@ Math::Function::Function(QString* expr) {
             }
             //sin
             else {
-                QString arg = expression->mid(4);
+                arg = expression->mid(4);
                 type = '7';
             }
 
+            arg.truncate(arg.length()-1);
+            qInfo()<<arg;
             connectedNodes = new Math::Function*[1];
             connectedNodes[0] = new Math::Function(&arg);
 
@@ -123,6 +148,7 @@ Math::Function::Function(QString* expr) {
         else {
             QString arg = expression->mid(5);
 
+            arg.truncate(arg.length()-1);
             type = '9';
             connectedNodes = new Math::Function*[1];
             connectedNodes[0] = new Math::Function(&arg);
@@ -138,7 +164,7 @@ Math::Function::Function(QString* expr) {
         return;
     }
 
-    type = 'e';
+    type = 'a';
     if ((*expression)[0] == QChar('e'))
         value = E;
     else
@@ -177,9 +203,9 @@ bool Math::Function::verify_str_par(QString* s) {
     int control = 0, i;
 
     for (i = 0; i < expr->length(); i++) {
-        if (expr[i] == '(')
+        if ((*expr)[i] == QChar('('))
             control++;
-        else if (expr[i] == ')') {
+        else if ((*expr)[i] == QChar(')')) {
             if (control > 0)
                 control--;
             else
@@ -210,40 +236,40 @@ void Math::Function::clear() {
 
 double Math::Function::Compute(double x, double parameter) {
     switch (type) {
-    case '1': //Sum
-        return (connectedNodes[0]->Compute(x, parameter)+connectedNodes[1]->Compute(x, parameter));
-    case '2': //Product
-        return (connectedNodes[0]->Compute(x, parameter)*connectedNodes[1]->Compute(x, parameter));
-    case '3': //Substraction
-        return (connectedNodes[0]->Compute(x, parameter)-connectedNodes[1]->Compute(x, parameter));
-    case '4': //Division
-        return (connectedNodes[0]->Compute(x, parameter)/connectedNodes[1]->Compute(x, parameter));
-    case '5': //Power
-        return pow(connectedNodes[0]->Compute(x, parameter), connectedNodes[1]->Compute(x, parameter));
-    case '6': //Natural logarithm
-        return log(connectedNodes[0]->Compute(x, parameter));
-    case '7': //Sine
-        return sin(connectedNodes[0]->Compute(x, parameter));
-    case '8': //Cosine
-        return cos(connectedNodes[0]->Compute(x, parameter));
-    case '9': //Square root
-        return sqrt(connectedNodes[0]->Compute(x, parameter));
-    case 'a': //Constant
-        return value;
-    case 'b': //Sinc
-        return Math::sinc(connectedNodes[0]->Compute(x, parameter));
-    case 'c': //x
-        return x;
-    case 'd': //Rect
-        return Math::Rect(connectedNodes[0]->Compute(x, parameter));
-    case 'e': //Delta
-        return Math::delta(connectedNodes[0]->Compute(x, parameter));
-    case 'f': //Abs
-        return abs(connectedNodes[0]->Compute(x, parameter));
-    case 'g': //Tri
-        return Math::Tri(value, connectedNodes[0]->Compute(x, parameter));
-    case 'h': //Parameter
-        return parameter;
-    default: return 0;
+        case '1': //Sum
+            return (connectedNodes[0]->Compute(x, parameter)+connectedNodes[1]->Compute(x, parameter));
+        case '2': //Product
+            return (connectedNodes[0]->Compute(x, parameter)*connectedNodes[1]->Compute(x, parameter));
+        case '3': //Substraction
+            return (connectedNodes[0]->Compute(x, parameter)-connectedNodes[1]->Compute(x, parameter));
+        case '4': //Division
+            return (connectedNodes[0]->Compute(x, parameter)/connectedNodes[1]->Compute(x, parameter));
+        case '5': //Power
+            return pow(connectedNodes[0]->Compute(x, parameter), connectedNodes[1]->Compute(x, parameter));
+        case '6': //Natural logarithm
+            return log(connectedNodes[0]->Compute(x, parameter));
+        case '7': //Sine
+            return sin(connectedNodes[0]->Compute(x, parameter));
+        case '8': //Cosine
+            return cos(connectedNodes[0]->Compute(x, parameter));
+        case '9': //Square root
+            return sqrt(connectedNodes[0]->Compute(x, parameter));
+        case 'a': //Constant
+            return value;
+        case 'b': //Sinc
+            return Math::sinc(connectedNodes[0]->Compute(x, parameter));
+        case 'c': //x
+            return x;
+        case 'd': //Rect
+            return Math::Rect(connectedNodes[0]->Compute(x, parameter));
+        case 'e': //Delta
+            return Math::delta(connectedNodes[0]->Compute(x, parameter));
+        case 'f': //Abs
+            return abs(connectedNodes[0]->Compute(x, parameter));
+        case 'g': //Tri
+            return Math::Tri(value, connectedNodes[0]->Compute(x, parameter));
+        case 'h': //Parameter
+            return parameter;
+        default: return 0;
     }
 }

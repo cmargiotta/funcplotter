@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QString>
 
-#include "src/math/math.h"
+#include "math/core/math.h"
 
 namespace Ui {
     class funcplotter;
