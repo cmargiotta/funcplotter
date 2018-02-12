@@ -62,9 +62,7 @@ class Math::Function {
 		 **/
         double Compute(double x, double parameter);
 
-	private:
-		//number of children
-		int children;
+    private:
         QString* expression;
 		/**************************
 		 * Possible "type" values:
