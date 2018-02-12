@@ -1,7 +1,7 @@
 #include <QString>
+#include <QDebug>
 #include <algorithm>
 #include <cmath>
-#include <iostream>
 
 #include "math.h"
 #include "../globals.h"
@@ -23,6 +23,7 @@ Math::Function::~Function() {
 }
 
 Math::Function::Function(QString* expression) {
+    qInfo()<<*expression<<'\n';
     this->expression = new QString(*expression);
     this->clear();
 	
@@ -32,14 +33,13 @@ Math::Function::Function(QString* expression) {
         this->isAnimated = false;
 	
     QString** parts;
-	int i, j;
-	int num;
+    int num, j;
 	char c[5] = {'+','*','-','/','^'};
 	char t[5] = {'1','2','3','4','5'};
 
 	//if +, *, -, / or ^
-	for (i = 0; i < 5; i++) {
-        num = std::count(expression->begin(), expression->end(), c[i]);
+    for (int i = 0; i < 5; i++) {
+        num = expression->count(c[i]);
 		j = 1;
 		if (num >= 1) {
 			if (i == 2) {
@@ -59,9 +59,9 @@ Math::Function::Function(QString* expression) {
             if (parts[1]->length() > 0 && verify_str_par(parts[0])) {
 				type = t[i];
                 connectedNodes = new Math::Function*[2];
-				children = 2;
-				connectedNodes[0] = new Math::Function(parts[0]);
-				connectedNodes[1] = new Math::Function(parts[1]);
+                children = 2;
+                connectedNodes[0] = new Math::Function(parts[0]);
+                connectedNodes[1] = new Math::Function(parts[1]);
 					
 				return;
 			}
@@ -82,17 +82,17 @@ Math::Function::Function(QString* expression) {
 	
 	children = 1;
 
-	for (i = 0; i < 6; i++) {
-		if (expression[0] == c1[i]) {
+    for (int i = 0; i < 6; i++) {
+        if (expression[0] == c1[i]) {
             QString arg = expression->mid(l[i]);
-			
-			type = id[i];
+
+            type = id[i];
             connectedNodes = new Math::Function*[1];
             connectedNodes[0] = new Math::Function(&arg);
 			
 			return;
 		}
-	}
+    }
 
 	if (expression[0] == 't') {
         QString arg = expression->mid(5);
@@ -134,7 +134,7 @@ Math::Function::Function(QString* expression) {
 			return;
 		}
 	}
-	
+
 	children = 0;
 
 	if (expression[0] == 'x') {
@@ -143,7 +143,7 @@ Math::Function::Function(QString* expression) {
 		
 		return;
 	}
-
+qInfo()<<"AAA"<<*expression;
 	type = 'a';
 	if (expression[0] == 'e')
 		value = E;

@@ -101,6 +101,8 @@ double Math::Rect(double x) {
 
 QString** Math::divide(char c, QString* str, int skip) {
     QString **result = new QString*[2];
+    QChar* strData = str->data();
+
 	int i;
 	bool found = false;
 
@@ -108,23 +110,23 @@ QString** Math::divide(char c, QString* str, int skip) {
     result[1] = new QString("");
 	
     for (i = 0; i < str->size(); i++) {
-		if (str[i] == c && !found) {
+        if (strData[i] == c && !found) {
 			if (skip > 1) {
 				skip--;
-                *result[0] += str[i];
+                *result[0] += strData[i];
 			}
 			else
 				found = true;
 		}
 		else {
 			if (found) {
-                *result[1] += str[i];
+                *result[1] += strData[i];
 			}
 			else {
-                *result[0] += str[i];
+                *result[0] += strData[i];
 			}
 		}
-	}
+    }
 
 	return result;
 }
