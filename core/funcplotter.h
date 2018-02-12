@@ -24,6 +24,8 @@ class funcplotter : public QMainWindow
         void onFFunctionReturn();
         void onGFunctionReturn();
         void onHFunctionReturn();
+        void computeFunction(Math::Function f, double** array);
+        void viewResized();
 };
 
 #endif // FUNCPLOTTER_H

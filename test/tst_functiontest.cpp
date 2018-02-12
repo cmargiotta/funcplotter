@@ -68,6 +68,7 @@ void functionTest::notSoSimpleExpressions() {
     QString sumOfFuncs ("sin(x)+cos(x)");
     QString tripleSum  ("1+2+x");
     QString opOrder    ("x+4/2");
+    QString compositeF ("sin(cos(x))");
 
     Function* f;
 
@@ -81,6 +82,10 @@ void functionTest::notSoSimpleExpressions() {
 
     f = new Function(&opOrder);
     QCOMPARE(f->Compute(3,0), 5);
+    delete f;
+
+    f = new Function(&compositeF);
+    QCOMPARE(f->Compute(3,0), sin(cos(3)));
     delete f;
 }
 

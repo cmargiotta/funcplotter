@@ -9,10 +9,10 @@
 #define E  2.718282
 #endif
 
-extern int width;
-extern int height;
+extern int viewWidth;
+extern int viewHeight;
 
-extern int y;
-extern int x;
+extern int yAxis;
+extern int xAxis;
 
 #endif
