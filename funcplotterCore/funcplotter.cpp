@@ -3,8 +3,8 @@
 #include "funcplotter.h"
 #include "ui_funcplotter.h"
 
-#include "src/globals.h"
-#include "src/math/math.h"
+#include "math/globals.h"
+#include "math/core/math.h"
 
 using namespace Math;
 
