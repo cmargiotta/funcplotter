@@ -4,8 +4,8 @@
 #include "math/globals.h"
 
 //global variables
-int x;
-int y;
+int xAxis, yAxis;
+int viewWidth, viewHeight;
 
 int main(int argc, char *argv[])
 {

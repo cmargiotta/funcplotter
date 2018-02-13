@@ -2,6 +2,7 @@
 #define MATH1_H
 
 #include <QString>
+#include <vector>
 
 namespace Math {
     class Function;
@@ -53,7 +54,7 @@ namespace Math {
 class Math::Function {
 	public:
 		//constructor
-        Function(QString* expression);
+        Function(QString* expression, bool first=true);
 		//destructor
 		~Function();
 		
@@ -61,8 +62,10 @@ class Math::Function {
 		 * Computes the numerical value of a function f(x) with a specified x
 		 **/
         double Compute(double x, double parameter);
+        void fillArray();
         void debugPrint();
     private:
+        std::vector<std::vector<double> > vec;
         QString* expression;
 		/**************************
 		 * Possible "type" values:

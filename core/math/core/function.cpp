@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <algorithm>
 #include <cmath>
+#include <vector>
 
 #include "math.h"
 #include "../globals.h"
@@ -17,6 +18,36 @@ Math::Function* Math::Function::argum(QString* s, int i) {
     parts = Math::divide(',', s, 0);
 
     return new Math::Function(parts[i]);
+}
+
+void Math::Function::fillArray() {
+    for (std::vector <std::vector <double>>::iterator v=vec.begin(); v<=vec.end(); v++)
+        v->erase(v->begin(), v->end());
+
+    double incr;
+    int parameters, c;
+
+    incr = viewWidth/((double) 2*xAxis);
+
+    //assuming vec[0] exists
+    if (isAnimated) {
+        parameters = (int) viewWidth/(2*incr);
+        for (int i=0; i<parameters-1; i++)
+            vec.push_back(std::vector <double> ());
+    }
+
+    for (double i=-xAxis*incr; i<xAxis*incr; i+=incr) {
+        if (!isAnimated)
+            vec[0].push_back(Compute(i, 0));
+        else {
+            c = 0;
+            for (double par=-xAxis*incr; par<xAxis*incr; i+=2*incr) {
+                vec[c].push_back(Compute(i, par));
+
+                c++;
+            }
+        }
+    }
 }
 
 void Math::Function::debugPrint() {
@@ -51,14 +82,19 @@ Math::Function::~Function() {
     }
 }
 
-Math::Function::Function(QString* expr) {
+Math::Function::Function(QString* expr, bool first) {
+    if (first) {
+        if (std::count(expression->begin(), expression->end(), QChar('a')) > 0)
+            this->isAnimated = true;
+        else
+            this->isAnimated = false;
+
+        std::vector<double> row;
+        vec.push_back(row); //vec[0]
+    }
+
     expression = new QString(*expr);
     clear();
-
-    if (std::count(expression->begin(), expression->end(), QChar('e')) > 0)
-        this->isAnimated = true;
-    else
-        this->isAnimated = false;
 
     QString** parts;
     int num, j, i;
@@ -85,9 +121,10 @@ Math::Function::Function(QString* expr) {
             if (parts[1]->length() > 0 && verify_str_par(parts[0])) {
                 type = t[i];
                 connectedNodes = new Math::Function*[2];
-                connectedNodes[0] = new Math::Function(parts[0]);
-                connectedNodes[1] = new Math::Function(parts[1]);
+                connectedNodes[0] = new Math::Function(parts[0], false);
+                connectedNodes[1] = new Math::Function(parts[1], false);
 
+                fillArray();
                 return;
             }
         }
@@ -98,6 +135,7 @@ Math::Function::Function(QString* expr) {
         type = 'h';
         this->isAnimated = true;
 
+        fillArray();
         return;
     }
 
@@ -107,12 +145,15 @@ Math::Function::Function(QString* expr) {
 
             type = id[i];
             connectedNodes = new Math::Function*[1];
-            connectedNodes[0] = new Math::Function(&arg);
+            connectedNodes[0] = new Math::Function(&arg, false);
 
+            fillArray();
             return;
         }
     }
 
+    //WTF?
+    /*
     if ((*expression)[0] == QChar('t')) {
         QString arg = expression->mid(5);
 
@@ -123,6 +164,7 @@ Math::Function::Function(QString* expr) {
 
         return;
     }
+    */
 
     if ((*expression)[0] == QChar('s')) {
         if ((*expression)[1] == QChar('i')) {
@@ -141,8 +183,9 @@ Math::Function::Function(QString* expr) {
             arg.truncate(arg.length()-1);
             qInfo()<<arg;
             connectedNodes = new Math::Function*[1];
-            connectedNodes[0] = new Math::Function(&arg);
+            connectedNodes[0] = new Math::Function(&arg, false);
 
+            fillArray();
             return;
         }
         else {
@@ -151,8 +194,9 @@ Math::Function::Function(QString* expr) {
             arg.truncate(arg.length()-1);
             type = '9';
             connectedNodes = new Math::Function*[1];
-            connectedNodes[0] = new Math::Function(&arg);
+            connectedNodes[0] = new Math::Function(&arg, false);
 
+            fillArray();
             return;
         }
     }
@@ -161,6 +205,7 @@ Math::Function::Function(QString* expr) {
         type = 'c';
         this->isAnimated = false;
 
+        fillArray();
         return;
     }
 
@@ -170,7 +215,7 @@ Math::Function::Function(QString* expr) {
     else
         value = expression->toDouble();
 
-    this->isAnimated = false;
+    fillArray();
 }
 
 QString* Math::Function::prepare_for_convolution() {

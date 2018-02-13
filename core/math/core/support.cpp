@@ -40,7 +40,7 @@ double Math::integral(double *points1, double *points2, double incr) {
 	double traitarea;
 	double a = 0;
 	//the value of a pixel
-	double k = height/(2*y);
+        double k = height/(2*yAxis);
 
 	for (i = 1; i < width; i++) {
 		traitarea = k*area(incr, points1[i-1]/k, points1[i]/k);
