@@ -2,7 +2,6 @@
 #include <QString>
 
 #include "math.h"
-#include "../globals.h"
 
 double Math::distance(double x1, double x2, double y1, double y2) {
 	return sqrt(pow(x2-x1, 2) + pow(y2-y1, 2));
@@ -33,16 +32,14 @@ double Math::area(double incr, double y1, double y2) {
 	return area;
 }
 
-double Math::integral(double *points1, double *points2, double incr) {
-	int width;
-	int height;
+double Math::integral(double *points1, double *points2, double incr, int viewHeight, int viewWidth, int yAxis) {
 	int i;
 	double traitarea;
 	double a = 0;
 	//the value of a pixel
-        double k = height/(2*yAxis);
+        double k = viewHeight/(2*yAxis);
 
-	for (i = 1; i < width; i++) {
+        for (i = 1; i < viewWidth; i++) {
 		traitarea = k*area(incr, points1[i-1]/k, points1[i]/k);
 		traitarea *= k*area(incr, points2[i-1]/k, points2[i]/k);
 		a += traitarea;
@@ -63,9 +60,8 @@ double Math::Tri(double b, double x) {
 	return 0;
 }
 
-double Math::delta(double x1) {
-	int x;
-	double incr = (2*x)/850.0;
+double Math::delta(double x1, int viewWidth, int xAxis) {
+    double incr = (2*xAxis)/viewWidth;
 
 	if (x1 < incr && x1 > -incr) {
 		return 1;
@@ -75,14 +71,14 @@ double Math::delta(double x1) {
 }
 
 double Math::sinc(double x) {
-	if (x > (-0.001) && x < (0.001)) {
-		return 1;
-	}
+    if (x > (-0.001) && x < (0.001)) {
+        return 1;
+    }
 
     double y = sin(PI*x);
     y /= PI*x;
 
-	return y;
+    return y;
 }
 
 double Math::step(double center, double x, double h) {

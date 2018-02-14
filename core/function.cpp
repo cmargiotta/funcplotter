@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "math.h"
-#include "../globals.h"
 
 const char  c[]  = {'+','*','-','/','^'};
 const char  t[]  = {'1','2','3','4','5'};
@@ -17,35 +16,29 @@ Math::Function* Math::Function::argum(QString* s, int i) {
     QString **parts;
     parts = Math::divide(',', s, 0);
 
-    return new Math::Function(parts[i]);
+    return new Math::Function(parts[i], params);
 }
 
 void Math::Function::fillArray() {
-    for (std::vector <std::vector <double>>::iterator v=vec.begin(); v<=vec.end(); v++)
-        v->erase(v->begin(), v->end());
-
     double incr;
-    int parameters, c;
+    int parameters;
 
-    incr = viewWidth/((double) 2*xAxis);
+    incr = ((double) 2*params->getXAxis())/params->getWidth();
 
     //assuming vec[0] exists
     if (isAnimated) {
-        parameters = (int) viewWidth/(2*incr);
-        for (int i=0; i<parameters-1; i++)
-            vec.push_back(std::vector <double> ());
+        parameters = (int) params->getWidth()/(16*incr);
+
+        for (int i=0; i<parameters; i++)
+            vec.push_back(new std::vector <double> ());
     }
 
-    for (double i=-xAxis*incr; i<xAxis*incr; i+=incr) {
+    for (double i=-params->getXAxis(); i<params->getXAxis(); i+=incr) {
         if (!isAnimated)
-            vec[0].push_back(Compute(i, 0));
+            vec[0]->push_back(Compute(i, 0));
         else {
-            c = 0;
-            for (double par=-xAxis*incr; par<xAxis*incr; i+=2*incr) {
-                vec[c].push_back(Compute(i, par));
-
-                c++;
-            }
+            for (int c=0; c<parameters; c++)
+                vec[c]->push_back(Compute(i, params->getXAxis()*2*c/(double) parameters));
         }
     }
 }
@@ -82,17 +75,13 @@ Math::Function::~Function() {
     }
 }
 
-Math::Function::Function(QString* expr, bool first) {
+Math::Function::Function(QString* expr, Math::plotterParameters* params, bool first) {
     if (first) {
-        if (std::count(expression->begin(), expression->end(), QChar('a')) > 0)
-            this->isAnimated = true;
-        else
-            this->isAnimated = false;
-
-        std::vector<double> row;
-        vec.push_back(row); //vec[0]
+        isAnimated = expr->count(QChar('a')) > 0;
+        vec.push_back(new std::vector <double> ()); //vec[0]
     }
 
+    this->params = params;
     expression = new QString(*expr);
     clear();
 
@@ -121,10 +110,10 @@ Math::Function::Function(QString* expr, bool first) {
             if (parts[1]->length() > 0 && verify_str_par(parts[0])) {
                 type = t[i];
                 connectedNodes = new Math::Function*[2];
-                connectedNodes[0] = new Math::Function(parts[0], false);
-                connectedNodes[1] = new Math::Function(parts[1], false);
+                connectedNodes[0] = new Math::Function(parts[0], params, false);
+                connectedNodes[1] = new Math::Function(parts[1], params, false);
 
-                fillArray();
+                if(first) fillArray();
                 return;
             }
         }
@@ -135,7 +124,7 @@ Math::Function::Function(QString* expr, bool first) {
         type = 'h';
         this->isAnimated = true;
 
-        fillArray();
+        if(first) fillArray();
         return;
     }
 
@@ -145,9 +134,9 @@ Math::Function::Function(QString* expr, bool first) {
 
             type = id[i];
             connectedNodes = new Math::Function*[1];
-            connectedNodes[0] = new Math::Function(&arg, false);
+            connectedNodes[0] = new Math::Function(&arg, params, false);
 
-            fillArray();
+            if(first) fillArray();
             return;
         }
     }
@@ -183,9 +172,9 @@ Math::Function::Function(QString* expr, bool first) {
             arg.truncate(arg.length()-1);
             qInfo()<<arg;
             connectedNodes = new Math::Function*[1];
-            connectedNodes[0] = new Math::Function(&arg, false);
+            connectedNodes[0] = new Math::Function(&arg, params, false);
 
-            fillArray();
+            if(first) fillArray();
             return;
         }
         else {
@@ -194,9 +183,9 @@ Math::Function::Function(QString* expr, bool first) {
             arg.truncate(arg.length()-1);
             type = '9';
             connectedNodes = new Math::Function*[1];
-            connectedNodes[0] = new Math::Function(&arg, false);
+            connectedNodes[0] = new Math::Function(&arg, params, false);
 
-            fillArray();
+            if(first) fillArray();
             return;
         }
     }
@@ -205,7 +194,7 @@ Math::Function::Function(QString* expr, bool first) {
         type = 'c';
         this->isAnimated = false;
 
-        fillArray();
+        if(first) fillArray();
         return;
     }
 
@@ -215,7 +204,7 @@ Math::Function::Function(QString* expr, bool first) {
     else
         value = expression->toDouble();
 
-    fillArray();
+    if(first) fillArray();
 }
 
 QString* Math::Function::prepare_for_convolution() {
@@ -308,7 +297,7 @@ double Math::Function::Compute(double x, double parameter) {
         case 'd': //Rect
             return Math::Rect(connectedNodes[0]->Compute(x, parameter));
         case 'e': //Delta
-            return Math::delta(connectedNodes[0]->Compute(x, parameter));
+            return Math::delta(connectedNodes[0]->Compute(x, parameter), params->getWidth(), params->getXAxis());
         case 'f': //Abs
             return abs(connectedNodes[0]->Compute(x, parameter));
         case 'g': //Tri

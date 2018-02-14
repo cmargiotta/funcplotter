@@ -5,7 +5,7 @@
 #include <QString>
 #include <vector>
 
-#include "math/core/math.h"
+#include "math.h"
 
 namespace Ui {
     class funcplotter;
@@ -21,6 +21,7 @@ class funcplotter : public QMainWindow
     private:
         Ui::funcplotter *ui;
         Math::Function *f, *g, *h;
+        Math::plotterParameters params;
 
         void onFFunctionReturn();
         void onGFunctionReturn();

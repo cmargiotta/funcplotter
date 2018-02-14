@@ -1,7 +1,7 @@
 #include <QtTest>
 #include <cmath>
 
-#include "../core/math/core/math.h"
+#include "../core/math.h"
 
 using namespace Math;
 
@@ -37,29 +37,31 @@ void functionTest::simpleExpressions() {
     QString sine ("sin(x)");
     QString x    ("x");
 
+    Math::plotterParameters a (0,0,0,0);
+
     Function* f;
 
-    f = new Function(&sum);
+    f = new Function(&sum, &a);
     QCOMPARE(f->Compute(3, 0), 4);
     delete f;
 
-    f = new Function(&mult);
+    f = new Function(&mult, &a);
     QCOMPARE(f->Compute(3,0), 6);
     delete f;
 
-    f = new Function(&div);
+    f = new Function(&div, &a);
     QCOMPARE(f->Compute(4,0), 2);
     delete f;
 
-    f = new Function(&sub);
+    f = new Function(&sub, &a);
     QCOMPARE(f->Compute(3,0), 2);
     delete f;
 
-    f = new Function(&x);
+    f = new Function(&x, &a);
     QCOMPARE(f->Compute(3,0), 3);
     delete f;
 
-    f = new Function(&sine);
+    f = new Function(&sine, &a);
     QCOMPARE(f->Compute(3,0), sin(3));
     delete f;
 }
@@ -70,21 +72,23 @@ void functionTest::notSoSimpleExpressions() {
     QString opOrder    ("x+4/2");
     QString compositeF ("sin(cos(x))");
 
+    Math::plotterParameters a (0,0,0,0);
+
     Function* f;
 
-    f = new Function(&sumOfFuncs);
+    f = new Function(&sumOfFuncs, &a);
     QCOMPARE(f->Compute(3,0), sin(3)+cos(3));
     delete f;
 
-    f = new Function(&tripleSum);
+    f = new Function(&tripleSum, &a);
     QCOMPARE(f->Compute(3,0), 6);
     delete f;
 
-    f = new Function(&opOrder);
+    f = new Function(&opOrder, &a);
     QCOMPARE(f->Compute(3,0), 5);
     delete f;
 
-    f = new Function(&compositeF);
+    f = new Function(&compositeF, &a);
     QCOMPARE(f->Compute(3,0), sin(cos(3)));
     delete f;
 }

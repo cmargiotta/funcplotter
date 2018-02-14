@@ -1,11 +1,20 @@
 #ifndef MATH1_H
 #define MATH1_H
 
+#ifndef E
+#define E 2.71828
+#endif
+
+#ifndef PI
+#define PI 3.14159
+#endif
+
 #include <QString>
 #include <vector>
 
 namespace Math {
     class Function;
+    class plotterParameters;
 
     /**
      * Distance between P1(x1, y1) and P2(x2, y2)
@@ -20,7 +29,7 @@ namespace Math {
     /**
      * Computes the definite integral of a function between -X_axis and +X_axis
      **/
-    double integral(double *points1, double *points2, double incr);
+    double integral(double *points1, double *points2, double incr, int viewHeight, int viewWidth, int yAxis);
     /**
      * Triangular impulse with base b
      **/
@@ -28,7 +37,7 @@ namespace Math {
     /**
      *Dirac delta
      **/
-    double delta(double x1);
+    double delta(double x1, int viewWidth, int xAxis);
     /**
      *Sinc function (sin(arg)/arg)
      **/
@@ -51,10 +60,34 @@ namespace Math {
     QString** divide(char c, QString* str, int skip);
 }
 
+class Math::plotterParameters {
+    public:
+        plotterParameters(int width, int height, int xAxis, int yAxis) {
+            this->width = width;
+            this->height = height;
+            this->xAxis = xAxis;
+            this->yAxis = yAxis;
+        }
+        ~plotterParameters() {};
+        int getXAxis() {return xAxis;}
+        int getYAxis() {return yAxis;}
+        int getWidth() {return width;}
+        int getHeight() {return height;}
+        void setXAxis(int x) {xAxis=x;}
+        void setYAxis(int y) {yAxis=y;}
+        void setWidth(int w) {width=w;}
+        void setHeight(int h) {height=h;}
+    private:
+        int xAxis;
+        int yAxis;
+        int width;
+        int height;
+};
+
 class Math::Function {
 	public:
 		//constructor
-        Function(QString* expression, bool first=true);
+        Function(QString* expression, Math::plotterParameters* params, bool first=true);
 		//destructor
 		~Function();
 		
@@ -65,7 +98,8 @@ class Math::Function {
         void fillArray();
         void debugPrint();
     private:
-        std::vector<std::vector<double> > vec;
+        Math::plotterParameters* params;
+        std::vector<std::vector<double>* > vec;
         QString* expression;
 		/**************************
 		 * Possible "type" values:
