@@ -6,7 +6,8 @@
 #include "funcplotter.h"
 #include "ui_funcplotter.h"
 
-#include "math.h"
+#include "math/math.h"
+#include "math/support.h"
 
 using namespace Math;
 

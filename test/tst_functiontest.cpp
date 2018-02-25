@@ -1,7 +1,7 @@
 #include <QtTest>
 #include <cmath>
 
-#include "../core/math.h"
+#include "../core/math/math.h"
 
 using namespace Math;
 
