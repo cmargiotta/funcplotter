@@ -14,7 +14,7 @@
 #include <resources.h>
 #define GLADE_RESOURCE_PATH "/plotter/plotter.glade"
 
-int x, y;
+int x_, y_;
 //drawable functions
 function f, g, h;
 GtkBuilder *builder;
@@ -56,14 +56,14 @@ void ComputeFunction(function f, double** arr) {
 	par = 0;
 	int i;
 	double incr, val;
-	incr = (2*x)/840.0;
-	val = -x;
-	double k = 644.0/(2*y);
+	incr = (2*x_)/840.0;
+	val = -x_;
+	double k = 644.0/(2*y_);
 	int m = 26+fs.len+10;
-	char *c = (char *) calloc(m, sizeof(char));
-	sprintf(c, "calculating %s from -%d to %d...",  fs.str, x, x);
+	char c[m];
+	sprintf(c, "calculating %s from -%d to %d...",  fs.str, x_, x_);
 	print(c);
-	free(c);
+
 	if (!f->animated) {
 		for (i = 0; i < 840; i++) {
 			arr[0][i] = -k*Compute(f, val, 0);
@@ -72,13 +72,13 @@ void ComputeFunction(function f, double** arr) {
 	}
 	else {
 		int j;
-		double param = -x;
+		double param = -x_;
 		for (i = 0; i < 840; i++) {
 			for (j = 0; j < 840; j++) {
 				arr[i][j] = -k*Compute(f, val, param);
 				val += incr;
 			}
-			val = -x;
+			val = -x_;
 			param += incr;
 		}
 	}
@@ -89,7 +89,7 @@ void on_done4_clicked (GtkButton *button, gpointer   user_data) {
 	GtkWidget *box;
 	box = GTK_WIDGET (gtk_builder_get_object (builder, "y_axis"));
 	char *a = (char *) gtk_entry_get_text(GTK_ENTRY(box));
-	y = (int) valueOf(new_string(a));
+	y_ = (int) valueOf(new_string(a));
 	ComputeFunction(f, f_array);
 	ComputeFunction(g, g_array);
 	ComputeFunction(h, h_array);
@@ -100,7 +100,7 @@ void on_done5_clicked (GtkButton *button, gpointer   user_data) {
 	GtkWidget *box;
 	box = GTK_WIDGET (gtk_builder_get_object (builder, "x_axis"));
 	char *a = (char *) gtk_entry_get_text(GTK_ENTRY(box));
-	x = (int) valueOf(new_string(a));
+	x_ = (int) valueOf(new_string(a));
 	ComputeFunction(f, f_array);
 	ComputeFunction(g, g_array);
 	ComputeFunction(h, h_array);
@@ -110,14 +110,14 @@ void on_done5_clicked (GtkButton *button, gpointer   user_data) {
 string done_clicked(char *a, function func, double** array) {
 	string s = new_string(a);
 
-	free_function(func);
+	//free_function(func);
 	func = new_function(s);
 	ComputeFunction(func, array);
-	if (f->animated && !conv) {
+	if (func->animated && !conv) {
 		for (par = 0; par < 840; par++) {
 			t1 = clock();
 			gtk_widget_queue_draw_area (plot, 0, 0, 850, 650);
-			while (gtk_events_pending() == TRUE) {
+			while (gtk_events_pending()) {
 				gtk_main_iteration_do(TRUE);
 			}
 			par++;
@@ -225,24 +225,16 @@ void axes(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 }
 
 gboolean draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
-	double k = 644.0/(2*y);
+	double k = 644.0/(2*y_);
 	axes(widget, cr, user_data);
 	int i;
 
 	if (!conv) {
 		for (i = 1; i < 840; i++) {
 			cairo_set_source_rgb (cr, 1, 0, 0);
-			if (f->animated) {
-				if (par < 840 && !isnan(f_array[par][i-1]) && !isnan(f_array[par][i]) && f_array[par][i-1]/k<=y*1000 && f_array[par][i]/k<=y*1000 && f_array[par][i-1]/k>=-y*1000 && f_array[par][i]/k>=-y*1000) {
-					cairo_move_to (cr, i-1, (f_array[par][i-1])+322);
-					cairo_line_to (cr, i, (f_array[par][i])+322);
-				}
-			}
-			else {
-				if (!isnan(f_array[0][i-1]) && !isnan(f_array[0][i]) && f_array[0][i-1]/k<=y*1000 && f_array[0][i]/k<=y*1000 && f_array[0][i-1]/k>=-y*1000 && f_array[0][i]/k>=-y*1000) {
-					cairo_move_to (cr, i-1, (f_array[0][i-1])+322);
-					cairo_line_to (cr, i, (f_array[0][i])+322);
-				}
+			if (par < 840 && !isnan(f_array[par][i-1]) && !isnan(f_array[par][i])) {
+				cairo_move_to (cr, i-1, (f_array[par][i-1])+322);
+				cairo_line_to (cr, i, (f_array[par][i])+322);
 			}
 
 			cairo_set_line_width (cr, 2);
@@ -250,13 +242,13 @@ gboolean draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
 			cairo_set_source_rgb (cr, 0, 1, 0);
 			if (g->animated) {
-				if (!isnan(g_array[par][i]) && !isnan(g_array[par][i-1]) && g_array[par][i-1]/k<=y*1000 && g_array[par][i]/k<=y*1000 && g_array[par][i-1]/k>=-y*1000 && g_array[par][i]/k>=-y*1000) {
+				if (!isnan(g_array[par][i]) && !isnan(g_array[par][i-1])) {
 					cairo_move_to (cr, i-1, (g_array[par][i-1])+322);
 					cairo_line_to (cr, i, (g_array[par][i])+322);
 				}
 			}
 			else {
-				if (!isnan(g_array[0][i]) && !isnan(g_array[0][i-1]) && g_array[0][i-1]/k<=y*1000 && g_array[0][i]/k<=y*1000 && g_array[0][i-1]/k>=-y*1000 && g_array[0][i]/k>=-y*1000) {
+				if (!isnan(g_array[0][i]) && !isnan(g_array[0][i-1])) {
 					cairo_move_to (cr, i-1, (g_array[0][i-1])+322);
 					cairo_line_to (cr, i, (g_array[0][i])+322);
 				}
@@ -266,13 +258,13 @@ gboolean draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
 			cairo_set_source_rgb (cr, 0, 0, 1);
 			if (h->animated) {
-				if (!isnan(h_array[par][i]) && !isnan(h_array[par][i-1]) && h_array[par][i-1]/k<=y*1000 && h_array[par][i]/k<=y*1000 && h_array[par][i-1]/k>=-y*1000 && h_array[par][i]/k>=-y*1000) {
+				if (!isnan(h_array[par][i]) && !isnan(h_array[par][i-1])) {
 					cairo_move_to (cr, i-1, (h_array[par][i-1])+322);
 					cairo_line_to (cr, i, (h_array[par][i])+322);
 				}
 			}
 			else {
-				if (!isnan(h_array[0][i]) && !isnan(h_array[0][i-1]) && h_array[0][i-1]/k<=y*1000 && h_array[0][i]/k<=y*1000 && h_array[0][i-1]/k>=-y*1000 && h_array[0][i]/k>=-y*1000) {
+				if (!isnan(h_array[0][i]) && !isnan(h_array[0][i-1])) {
 					cairo_move_to (cr, i-1, (h_array[0][i-1])+322);
 					cairo_line_to (cr, i, (h_array[0][i])+322);
 				}
@@ -285,7 +277,7 @@ gboolean draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 		if (par > 0) {
 			for (i = 1; i < 840; i++) {
 				cairo_set_source_rgb (cr, 1, 0, 0);
-				if (par < 840 && !isnan(f_array[par][i-1]) && !isnan(f_array[par][i]) && f_array[par][i-1]/k<=y*1000 && f_array[par][i]/k<=y*1000 && f_array[par][i-1]/k>=-y*1000 && f_array[par][i]/k>=-y*1000) {
+				if (par < 840 && !isnan(f_array[par][i-1]) && !isnan(f_array[par][i])) {
 					cairo_move_to (cr, i-1, (f_array[par][i-1])+322);
 					cairo_line_to (cr, i, (f_array[par][i])+322);
 				}
@@ -295,7 +287,7 @@ gboolean draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
 				cairo_set_source_rgb (cr, 0, 1, 0);
 
-				if (!isnan(g_array[0][i]) && !isnan(g_array[0][i-1]) && g_array[0][i-1]/k<=y*1000 && g_array[0][i]/k<=y*1000 && g_array[0][i-1]/k>=-y*1000 && g_array[0][i]/k>=-y*1000) {
+				if (!isnan(g_array[0][i]) && !isnan(g_array[0][i-1])) {
 					cairo_move_to (cr, i-1, (g_array[0][i-1])+322);
 					cairo_line_to (cr, i, (g_array[0][i])+322);
 				}
@@ -327,7 +319,7 @@ void convol() {
 	par = 0;
 
 	/*READING F FROM TEXT BOX AND PREPARING IT FOR A CONVOLUTION
-	(REPLACING EVERY X WITH (-X+A)*/
+	(REPLACING EVERY x_ WITH (-X+A)*/
 	box = GTK_WIDGET (gtk_builder_get_object (builder, "f"));
 	fs = prepare_for_convolution(fs);
 	fs = clean(fs);
@@ -336,11 +328,12 @@ void convol() {
 	f = new_function(fs);
 	ComputeFunction(f, f_array);
 
-	incr = (2*x)/840.0;
+	incr = (2*x_)/840.0;
 
 	//CALCULATING CONVOLUTION FUNCTION
 	for (i = 0; i < 840; i++) {
 		convolution[i] = -integral(f_array[i], g_array[0], incr);
+		printf("%f\n", convolution[i]);
 	}
 
 	//ANIMATION
@@ -374,8 +367,8 @@ int main (int argc, char *argv[]) {
 	fps = 120;
 	conv = 0;
 	par = 0;
-	x = 10;
-	y = 7;
+	x_ = 10;
+	y_ = 7;
 
 	//ALLOCATING RESOURCES
 	speed_lab = (char *) malloc(32);

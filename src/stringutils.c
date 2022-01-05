@@ -53,7 +53,7 @@ int num_char(string s, char ch) {
 		}
 		c++;
 	}
-
+	
 	return n;
 }
 

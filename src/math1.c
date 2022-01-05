@@ -34,10 +34,10 @@ double sinc(double x) {
 		return 1;
 	}
 
-	double y = sin(pi*x);
-	y /= pi*x;
+	double y_ = sin(pi*x);
+	y_ /= pi*x;
 
-	return y;
+	return y_;
 }
 
 

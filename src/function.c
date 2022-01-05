@@ -10,6 +10,8 @@
 #define pi 3.141593
 #define e 2.718282
 
+extern int y_;
+
 double distance(double x1, double x2, double y1, double y2) {
 	double dist = sqrt(pow(x2-x1,2)+pow(y2-y1,2));
 	return dist;
@@ -47,7 +49,7 @@ double integral(double *points1, double *points2, double incr) {
 	double traitarea;
 	double a = 0;
 	//the value of a pixel
-	double k = 644.0/(2*y);
+	double k = 644.0/(2*y_);
 
 	for (i = 1; i < 840; i++) {
 		traitarea = k*area(incr, points1[i-1]/k, points1[i]/k);
@@ -59,10 +61,10 @@ double integral(double *points1, double *points2, double incr) {
 }
 
 string prepare_for_convolution(string s) {
-	int x = num_char(s, 'x');
+	int x_ = num_char(s, 'x');
 	int a = num_char(s, 'a');
-	if (a < x) {
-		int len = s.len + x*5;
+	if (a < x_) {
+		int len = s.len + x_*5;
 		char *c = (char *) malloc(len+1);
 		int d=0, i;
 		for (i = 0; i < s.len; i++) {
@@ -118,18 +120,17 @@ int verify_str_par(string s) {
 
 string remove_par(string s) {
 	if (s.str[0] == '(' && s.str[s.len-1] == ')') {
-		char *c = (char *) malloc(s.len-1);
+		char c[s.len-1];
 		int i, j=0;
 		for (i = 1; i < s.len-1; i++) {
 			c[j] = s.str[i];
 			j++;
 		}
 		c[j] = '\0';
-		string clean = new_string(c);
-		if (verify_str_par(clean)) {
-			return clean;
+		string clean_ = new_string(c);
+		if (verify_str_par(clean_)) {
+			return clean_;
 		}
-		free(c);
 	}
 	return s;
 }
@@ -172,6 +173,8 @@ function new_function(string s) {
 	char c[5] = {'+','*','-','/','^'};
 	char t[5] = {'1','2','3','4','5'};
 
+	f->animated = num_char(s,'a') > 0;
+
 	//if +, *, -, / or ^
 	for (i = 0; i < 5; i++) {
 		num = num_char(s, c[i]);
@@ -195,12 +198,7 @@ function new_function(string s) {
 				f->type = t[i];
 				f->prev = new_function(parts[0]);
 				f->argument = new_function(parts[1]);
-				if (num_char(s,'a') > 0) {
-					f->animated = 1;
-				}
-				else {
-					f->animated = 0;
-				}
+				
 				return f;
 			}
 		}
@@ -209,7 +207,6 @@ function new_function(string s) {
 	//if there's a parameter
 	if (s.str[0] == 'a' && s.len == 1) {
 		f->type = 'h';
-		f->animated = 1;
 		return f;
 	}
 
@@ -230,12 +227,7 @@ function new_function(string s) {
 			f->type = id[i];
 			f->argument = new_function(arg);
 			f->prev = NULL;
-			if (num_char(s,'a') > 0) {
-				f->animated = 1;
-			}
-			else {
-				f->animated = 0;
-			}
+			
 			return f;
 		}
 	}
@@ -253,12 +245,7 @@ function new_function(string s) {
 		f->value = argum(arg,0)->value;
 		f->argument = argum(arg,1);
 		f->prev = NULL;
-		if (num_char(s,'a') > 0) {
-			f->animated = 1;
-		}
-		else {
-			f->animated = 0;
-		}
+		
 		return f;
 	}
 
@@ -276,12 +263,7 @@ function new_function(string s) {
 				f->type = 'b';
 				f->argument = new_function(arg);
 				f->prev = NULL;
-				if (num_char(s,'a') > 0) {
-					f->animated = 1;
-				}
-				else {
-					f->animated = 0;
-				}
+				
 				return f;
 			}
 			char *argument = (char *) malloc(s.len-4);
@@ -295,12 +277,7 @@ function new_function(string s) {
 			f->type = '7';
 			f->argument = new_function(arg);
 			f->prev = NULL;
-			if (num_char(s,'a') > 0) {
-				f->animated = 1;
-			}
-			else {
-				f->animated = 0;
-			}
+			
 			return f;
 		}
 		else {
@@ -315,19 +292,13 @@ function new_function(string s) {
 			f->type = '9';
 			f->argument = new_function(arg);
 			f->prev = NULL;
-			if (num_char(s,'a') > 0) {
-				f->animated = 1;
-			}
-			else {
-				f->animated = 0;
-			}
+			
 			return f;
 		}
 	}
 
 	if (s.str[0] == 'x') {
 		f->type = 'c';
-		f->animated = 0;
 		f->argument = NULL;
 		f->prev = NULL;
 		return f;
@@ -344,7 +315,7 @@ function new_function(string s) {
 		f->argument = NULL;
 		f->prev = NULL;
 	}
-	f->animated = 0;
+	
 	return f;
 }
 
@@ -358,7 +329,7 @@ function argum(string s, int i) {
 }
 
 void free_function(element *el) {
-	if (el != NULL) {
+	if (el) {
 		element *a = el->prev;
 		element *b = el->argument;
 		free(el);
